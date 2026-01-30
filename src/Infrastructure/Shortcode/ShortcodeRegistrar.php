@@ -6,6 +6,6 @@ class ShortcodeRegistrar
 {
     public function addShortcode(string $name, callable $callback): void
     {
-        add_shortcode($name, $callback);
+        \add_shortcode($name, $callback);
     }
 }
