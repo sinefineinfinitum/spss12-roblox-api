@@ -7,7 +7,6 @@ use SineFine\RobloxApi\Data\Source\ThumbnailUrlDataSource;
 
 class GameIconUrlDataSource extends ThumbnailUrlDataSource
 {
-
     /**
      * @inheritDoc
      */

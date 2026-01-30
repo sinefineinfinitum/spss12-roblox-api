@@ -93,20 +93,6 @@ abstract class FetcherDataSource extends AbstractDataSource {
 	/**
 	 * @inheritDoc
 	 */
-	public function shouldRegisterLegacyParserFunction(): bool {
-		return false;
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	public function shouldEscapeResult( mixed $result ): bool {
-		return true;
-	}
-
-	/**
-	 * @inheritDoc
-	 */
 	public function getId(): string {
 		return $this->id;
 	}
@@ -117,9 +103,4 @@ abstract class FetcherDataSource extends AbstractDataSource {
 	public function exec(array $requiredArgs, array $optionalArgs = [] ): mixed {
 		return $this->fetch( $requiredArgs, $optionalArgs );
 	}
-
-	public function getFetcherSourceId(): string {
-		return $this->getId();
-	}
-
 }

@@ -4,7 +4,6 @@ namespace SineFine\RobloxApi\Data\Source;
 
 abstract class AbstractDataSource implements IDataSource
 {
-
     /**
      * @var bool Whether this data source is enabled.
      */

@@ -31,9 +31,12 @@ final class Plugin
             $id = $dataSource->getId();
             $shortcodeName = 'roblox_' . $id;
 
-            $registrar->addShortcode($shortcodeName, function ($attrs) use ($processor, $dataSource) {
-                return $processor->process($dataSource, (array)$attrs);
-            });
+            $registrar->addShortcode(
+                $shortcodeName,
+                function ($attrs) use ($processor, $dataSource) {
+                    return $processor->process($dataSource, (array)$attrs);
+                }
+            );
         }
     }
 }

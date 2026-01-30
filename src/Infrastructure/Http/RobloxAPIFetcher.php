@@ -132,7 +132,7 @@ class RobloxAPIFetcher
     {
         $cachingExpiry = $this->options->get(RobloxAPIConstants::ConfCachingExpiries);
         if (!isset($cachingExpiry[$id])) {
-            return $cachingExpiry['*'];
+            return $cachingExpiry['*'] ?? self::CACHE_EXPIRY_DEFAULT;
         }
 
         return $cachingExpiry[$id];

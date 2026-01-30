@@ -29,12 +29,3 @@ add_action('plugins_loaded', static function () {
         (new Plugin())->boot();
     }
 });
-
-//
-//add_action( 'wp_footer', 'display_all_shortcodes' );
-//function display_all_shortcodes() {
-//    if (current_user_can( 'manage_options' ) ) {
-//        global $shortcode_tags;
-//        echo '<pre>'; print_r($shortcode_tags); echo '</pre>';
-//    }
-//}

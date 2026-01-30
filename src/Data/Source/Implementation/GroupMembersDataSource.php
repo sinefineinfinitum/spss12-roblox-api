@@ -8,7 +8,6 @@ use SineFine\RobloxApi\Data\Source\DependentDataSource;
 
 class GroupMembersDataSource extends DependentDataSource
 {
-
     /**
      * @inheritDoc
      */
@@ -41,13 +40,5 @@ class GroupMembersDataSource extends DependentDataSource
     public function getArgumentSpecification(): ArgumentSpecification
     {
         return new ArgumentSpecification(['GroupID']);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function shouldRegisterLegacyParserFunction(): bool
-    {
-        return true;
     }
 }

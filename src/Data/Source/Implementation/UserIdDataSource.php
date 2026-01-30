@@ -12,7 +12,6 @@ use SineFine\RobloxApi\Domain\Exceptions\RobloxAPIException;
  */
 class UserIdDataSource extends FetcherDataSource
 {
-
     /**
      * @inheritDoc
      */
@@ -93,13 +92,4 @@ class UserIdDataSource extends FetcherDataSource
     // for legacy reasons, this data source does not return the full json.
     // instead, it returns the id directly.
     // this is because the id is the same as the one of the legacy parser function.
-
-    /**
-     * @inheritDoc
-     */
-    public function shouldRegisterLegacyParserFunction(): bool
-    {
-        return true;
-    }
-
 }

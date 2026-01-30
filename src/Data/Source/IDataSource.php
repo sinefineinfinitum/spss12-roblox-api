@@ -19,32 +19,14 @@ interface IDataSource {
 	public function exec(array $requiredArgs, array $optionalArgs = [] ): mixed;
 
 	/**
-	 * Determines whether a legacy parser function should be registered.
-	 */
-	public function shouldRegisterLegacyParserFunction(): bool;
-
-	/**
 	 * Gets the argument specification for this data source.
 	 */
 	public function getArgumentSpecification(): ArgumentSpecification;
 
 	/**
-	 * Determines whether the result of the parser function should be escaped.
-	 * Note that this is ignored and the result is always escaped if the data source returns JSON data.
-	 * @param mixed $result The result of the parser function.
-	 * @return bool Whether the result should be escaped and url-encoded.
-	 */
-	public function shouldEscapeResult( mixed $result ): bool;
-
-	/**
 	 * Gets the ID of the data source.
 	 */
 	public function getId(): string;
-
-	/**
-	 * @return string The ID of the data source that fetches the data for this one.
-	 */
-	public function getFetcherSourceId(): string;
 
 	/**
 	 * @return bool Whether the data source is enabled.

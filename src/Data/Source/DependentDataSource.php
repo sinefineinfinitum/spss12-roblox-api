@@ -32,20 +32,6 @@ abstract class DependentDataSource extends AbstractDataSource {
 	}
 
 	/**
-	 * @inheritDoc
-	 */
-	public function shouldRegisterLegacyParserFunction(): bool {
-		return false;
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	public function shouldEscapeResult( mixed $result ): bool {
-		return true;
-	}
-
-	/**
 	 * Throws an exception stating that the data source returned no data.
 	 * @throws RobloxAPIException
 	 */
@@ -70,11 +56,6 @@ abstract class DependentDataSource extends AbstractDataSource {
 	protected function failInvalidData(): void
     {
 		throw new RobloxAPIException( 'robloxapi-error-invalid-data' );
-	}
-
-	public function getFetcherSourceId(): string
-    {
-		return $this->dataSource->getFetcherSourceId();
 	}
 
 	/**

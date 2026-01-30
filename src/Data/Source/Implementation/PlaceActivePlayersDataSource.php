@@ -6,40 +6,35 @@ use SineFine\RobloxApi\Data\Args\ArgumentSpecification;
 use SineFine\RobloxApi\Data\Source\DataSourceProvider;
 use SineFine\RobloxApi\Data\Source\DependentDataSource;
 
-class PlaceActivePlayersDataSource extends DependentDataSource {
+class PlaceActivePlayersDataSource extends DependentDataSource
+{
+    /**
+     * @inheritDoc
+     */
+    public function __construct(DataSourceProvider $dataSourceProvider)
+    {
+        parent::__construct($dataSourceProvider, 'activePlayers', 'gameData');
+    }
 
-	/**
-	 * @inheritDoc
-	 */
-	public function __construct( DataSourceProvider $dataSourceProvider ) {
-		parent::__construct( $dataSourceProvider, 'activePlayers', 'gameData' );
-	}
+    /**
+     * @inheritDoc
+     */
+    public function exec(array $requiredArgs, array $optionalArgs = []): mixed
+    {
+        $gameData = $this->dataSource->exec($requiredArgs);
 
-	/**
-	 * @inheritDoc
-	 */
-	public function exec(array $requiredArgs, array $optionalArgs = [] ): mixed {
-		$gameData = $this->dataSource->exec($requiredArgs );
+        if (!$gameData) {
+            $this->failNoData();
+        }
 
-		if ( !$gameData ) {
-			$this->failNoData();
-		}
+        return $gameData->playing;
+    }
 
-		return $gameData->playing;
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	public function getArgumentSpecification(): ArgumentSpecification {
-		return new ArgumentSpecification( [ 'UniverseID', 'GameID' ] );
-	}
-
-	/**
-	 * @inheritDoc
-	 */
-	public function shouldRegisterLegacyParserFunction(): bool {
-		return true;
-	}
-
+    /**
+     * @inheritDoc
+     */
+    public function getArgumentSpecification(): ArgumentSpecification
+    {
+        return new ArgumentSpecification(['UniverseID', 'GameID']);
+    }
 }

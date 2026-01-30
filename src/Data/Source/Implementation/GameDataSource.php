@@ -12,7 +12,6 @@ use SineFine\RobloxApi\Domain\Exceptions\RobloxAPIException;
  */
 class GameDataSource extends FetcherDataSource
 {
-
     public function __construct(RobloxAPIFetcher $fetcher)
     {
         parent::__construct('gameData', $fetcher);
@@ -47,18 +46,16 @@ class GameDataSource extends FetcherDataSource
                 continue;
             }
 
+            if (array_key_exists('json_key', $optionalArgs)) {
+                //TODO multidimensional properties
+                $key = $optionalArgs['json_key'];
+               return $entry->{$key} ?? $entry;
+            }
+
             return $entry;
         }
 
         return null;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function shouldRegisterLegacyParserFunction(): bool
-    {
-        return true;
     }
 
     /**

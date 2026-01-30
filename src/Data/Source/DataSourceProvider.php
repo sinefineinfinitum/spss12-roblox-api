@@ -24,7 +24,6 @@ use SineFine\RobloxApi\Data\Source\Implementation\UserPlaceVisitsDataSource;
  */
 class DataSourceProvider
 {
-
     /**
      * @var array<string, IDataSource> The currently enabled data sources.
      */

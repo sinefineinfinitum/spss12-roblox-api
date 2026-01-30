@@ -31,6 +31,11 @@ abstract class ThumbnailDataSource extends FetcherDataSource {
 			throw new RobloxAPIException( 'robloxapi-error-unexpected-data-structure' );
 		}
 
+        if (array_key_exists('json_key', $optionalArgs)) {
+            $key =$optionalArgs['json_key'];
+            return $data->data[0]->{$key} ?? $data->data;
+        }
+
 		return $data->data;
 	}
 
