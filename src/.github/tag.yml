@@ -1,0 +1,113 @@
+name: Create Plugin Release
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+
+jobs:
+  test:
+    name: Tests and Static Analyze
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: wordpress
+        ports:
+          - 3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          tools: composer, cs2pr
+          extensions: zip, simplexml
+
+      - name: Update environment config for GitHub Actions
+        env:
+          PLUGIN_SLUG: ${{ github.event.repository.name }}
+        run: |
+          find . -depth \( -name '.env.testing' \) -exec sed -i "s/TEST_SITE_DB_HOST=\"127.0.0.1\"/TEST_SITE_DB_HOST=\"127.0.0.1:${{ job.services.mysql.ports['3306'] }}\"/g" {} +
+          find . -depth \( -name '.env.testing' -o -name '*.cest' \) -exec sed -i "s/localhost:8080\/${{ env.PLUGIN_SLUG }}/localhost:8080/g" {} +
+          find . -depth \( -name 'dump.sql' \) -exec sed -i "s/localhost:8080\/${{ env.PLUGIN_SLUG }}/localhost:8080/g" {} +
+
+      - name: Read .env.testing
+        uses: c-py/action-dotenv-to-setenv@v2
+        with:
+          env-file: .env.testing
+
+      - name: Configure MySQL
+        run: |
+          mysql -h 127.0.0.1 --port ${{ job.services.mysql.ports['3306'] }} -u root -ppassword -e "CREATE USER '"$TEST_DB_USER"'@'%' IDENTIFIED WITH mysql_native_password BY '"$TEST_DB_PASSWORD"';";
+
+      - name: Run composer install
+        continue-on-error: true
+        run: composer install  --no-interaction --prefer-dist --no-progress
+
+      - name: Run PHPStan to add annotations to the code
+        run: vendor/bin/phpstan analyse -c phpstan.neon --memory-limit 1G --no-progress --error-format=checkstyle | cs2pr
+
+      - name: Run PhpUnit
+        run: vendor/bin/phpunit -c phpunit.xml.dist
+
+      - name: Remove vendor
+        run: rm -r vendor
+
+      - name: Run composer install without dev
+        continue-on-error: true
+        run: composer install --no-dev --no-interaction --prefer-dist --no-progress
+
+      - name: Build and zip plugin
+        run: |
+          mkdir -p build/
+          find . -type d \( -path ./cache -o -path ./node_modules -o -path ./tests -o -path ./docs \
+            -o -path ./.pnpm-store -o -path ./.git  -o -path ./.github  \) -prune \
+            -o -type f \( -name '*.php' -o -name '*.json' -o -name '*.js' -o -name '*.md' \
+            -o -name 'LICENSE' -o -name '*.txt' \) -print \
+            | zip build/spss12-roblox-api.zip -@
+
+      - name: Upload Plugin artifact
+        id: upload_artifact_step
+        uses: actions/upload-artifact@v6
+        with:
+          name: spss12-roblox-api
+          path: build/spss12-roblox-api.zip
+
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    needs: test
+    steps:
+      - name: Generate Changelog
+        id: changelog
+        uses: metcalfc/changelog-generator@v4
+        with:
+          myToken: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/download-artifact@v7
+        with:
+          name: spss12-roblox-api
+          path: build
+
+      - name: Creating Release
+        uses: ncipollo/release-action@v1
+        with:
+          body: |
+            Changes in this Release: 
+            ${{ steps.changelog.outputs.changelog }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: Release ${{ env.GITHUB_REF_SLUG }}
+          allowUpdates: true
+          artifactErrorsFailBuild: true
+          artifacts: "build/spss12-roblox-api.zip"
